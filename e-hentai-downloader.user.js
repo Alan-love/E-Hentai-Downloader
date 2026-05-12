@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         E-Hentai Downloader
-// @version      1.36.1
+// @version      1.36.2
 // @description  Download E-Hentai archive as zip file
 // @author       864907600cc
 // @icon         https://secure.gravatar.com/avatar/147834caf9ccb0a66b2505c753747867
@@ -14439,20 +14439,22 @@ function initEHDownload() {
 	if (infoNeeds.indexOf('metas') >= 0) infoStr += 'Rating: ' + unsafeWindow.average_rating + '\n\n';
 
 	if (infoNeeds.indexOf('tags') >= 0) {
-		infoStr += 'Tags:\n';
-
 		var tagsList = document.querySelectorAll('#taglist tr');
-		Array.prototype.forEach.call(tagsList, function(elem){
-			var tds = elem.getElementsByTagName('td');
-			infoStr += '> ' + tds[0].textContent + ' ';
+		if (tagsList.length && ((tagsList[0] || {}).textContent || '').trim() !== '') {
+			infoStr += 'Tags:\n';
 
-			var tags = tds[1].querySelectorAll('a');
-			infoStr += Array.prototype.map.call(tags, function(e){
-				return e.textContent;
-			}).join(', ') + '\n';
-		});
+			Array.prototype.forEach.call(tagsList, function(elem){
+				var tds = elem.getElementsByTagName('td');
+				infoStr += '> ' + tds[0].textContent + ' ';
 
-		infoStr += '\n';
+				var tags = tds[1].querySelectorAll('a');
+				infoStr += Array.prototype.map.call(tags, function(e){
+					return e.textContent;
+				}).join(', ') + '\n';
+			});
+
+			infoStr += '\n';
+		}
 	}
 
 	if (infoNeeds.indexOf('uploader-comment') >= 0 && document.getElementById('comment_0')) {
